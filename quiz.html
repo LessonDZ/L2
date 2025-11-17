@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Quiz – Chapitre I : Matériel génétique</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#f7fbff;
+    --card:#fff;
+    --accent:#1d6ad8;
+    --good:#2f855a;
+    --bad:#c53030;
+    --muted:#556;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Cairo",sans-serif;
+    background:var(--bg);
+    padding:16px;
+    line-height:1.8;
+    color:#111;
+  }
+  .container{max-width:1100px;margin:auto}
+
+  header{
+    background:linear-gradient(90deg, rgba(29,106,216,0.10), rgba(29,106,216,0.03));
+    padding:16px;
+    border-left:6px solid var(--accent);
+    border-radius:10px;
+    margin-bottom:18px;
+  }
+  header h1{margin:0;color:var(--accent)}
+  header p{margin:8px 0 0;color:var(--muted)}
+
+  .card{
+    background:var(--card);
+    padding:16px;
+    margin-top:14px;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(10,30,60,0.05);
+  }
+
+  h2{color:var(--accent);margin-top:0}
+
+  /* Theory Questions */
+  .theory-list{list-style:none;padding:0;margin:0}
+  .theory-item{
+    border:1px solid #d9e8ff;
+    padding:12px;
+    margin-bottom:12px;
+    border-radius:10px;
+    background:#f9fcff;
+    cursor:pointer;
+  }
+  .q-fr{font-weight:700;color:var(--accent)}
+  .q-ar{font-weight:700;color:#444;margin-top:6px}
+
+  .theory-answer{
+    display:none;
+    margin-top:10px;
+    padding:10px;
+    border-left:5px solid var(--good);
+    background:#eefbf4;
+    border-radius:6px;
+  }
+
+  /* QCM */
+  .qcm-card{
+    background:#fff;
+    border:1px solid #e4edff;
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:14px;
+  }
+  .qcm-title{font-weight:700;color:var(--accent);margin-bottom:10px}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .option{
+    background:#f8fbff;
+    border:1px solid #dbe8ff;
+    padding:10px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .option.correct{
+    background:#dff6e9;
+    color:var(--good);
+    border-color:rgba(47,133,90,0.40);
+  }
+  .option.wrong{
+    background:#ffe6e6;
+    color:var(--bad);
+    border-color:rgba(197,48,48,0.30);
+  }
+
+  .btn{
+    background:var(--accent);
+    color:#fff;
+    padding:12px 16px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .btn.secondary{
+    background:#fff;
+    border:1px solid var(--accent);
+    color:var(--accent);
+  }
+
+  .result{
+    margin-top:12px;
+    font-size:18px;
+    font-weight:800;
+    color:var(--accent);
+  }
+
+  @media (max-width:720px){
+    .qcm-title{font-size:15px}
+    .option{font-size:14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <h1>Quiz – Chapitre I : Matériel génétique</h1>
+  <p>أسئلة نظرية + QCM متدرجة الصعوبة — بالفرنسية والعربية</p>
+</header>
+
+<!-- =============================== THEORETICAL QUESTIONS =============================== -->
+<section class="card">
+  <h2>أسئلة نظرية — Questions Théoriques (20)</h2>
+  <ul class="theory-list" id="theoryList"></ul>
+  <small style="color:var(--muted)">اضغط على السؤال لعرض الإجابة (FR + AR).</small>
+</section>
+
+<!-- =============================== QCM =============================== -->
+<section class="card" style="margin-top:18px">
+  <h2>أسئلة QCM — Questions à Choix Multiples (20)</h2>
+  <div id="qcmContainer"></div>
+
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button id="showScoreBtn" class="btn">عرض النتيجة — Afficher le score</button>
+    <button id="resetBtn" class="btn secondary">إعادة تعيين — Réinitialiser</button>
+    <div id="scoreBox" class="result" aria-live="polite"></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ===================== 20 أسئلة نظرية (FR + AR + إجابات FR+AR) ===================== */
+
+const theoryQuestions = [
+  // 1-7 : سهل
+  {
+    fr: "1) Qu’est-ce que le matériel génétique ?",
+    ar: "1) ما هي المادة الوراثية؟",
+    rep_fr: "Le matériel génétique est l'ensemble des informations biologiques portées par les acides nucléiques (ADN/ARN).",
+    rep_ar: "المادة الوراثية هي مجموعة المعلومات البيولوجية المحفوظة في الأحماض النووية (ADN/ARN)."
+  },
+  {
+    fr: "2) Quelles sont les principales molécules du matériel génétique ?",
+    ar: "2) ما هي الجزيئات الأساسية للمادة الوراثية؟",
+    rep_fr: "Les principales molécules sont l'ADN (acide désoxyribonucléique) et l'ARN (acide ribonucléique).",
+    rep_ar: "الجزيئتان الرئيسيتان هما الـADN والـARN."
+  },
+  {
+    fr: "3) De quoi est composé un nucléotide ?",
+    ar: "3) مم يتكون النوكليوتيد؟",
+    rep_fr: "Un nucléotide comprend un sucre (ribose ou désoxyribose), un groupe phosphate et une base azotée.",
+    rep_ar: "النيوكليوتيد يتكون من سكر، مجموعة فوسفات، وقاعدة نيتروجينية."
+  },
+  {
+    fr: "4) Quelles sont les bases azotées de l'ADN ?",
+    ar: "4) ما هي القواعد النيتروجينية في الـADN؟",
+    rep_fr: "Adenine (A), Thymine (T), Guanine (G), Cytosine (C).",
+    rep_ar: "الأدينين (A)، الثايمين (T)، الجوانين (G)، السايتوسين (C)."
+  },
+  {
+    fr: "5) Quelle est la fonction principale de l'ADN ?",
+    ar: "5) ما الوظيفة الأساسية للـADN؟",
+    rep_fr: "Stocker l'information génétique et transmettre les instructions pour la synthèse des protéines.",
+    rep_ar: "تخزين المعلومات الوراثية وتوجيه تصنيع البروتينات."
+  },
+  {
+    fr: "6) Quelle différence chimique existe entre ADN et ARN ?",
+    ar: "6) ما الفرق الكيميائي بين الـADN والـARN؟",
+    rep_fr: "L'ADN contient le désoxyribose et la thymine; l'ARN contient le ribose et l'uracile.",
+    rep_ar: "الـADN يحتوي ديوكسيريبوز وثايمين، والـARN يحتوي ريبوز ويوراسيل."
+  },
+  {
+    fr: "7) Où se trouve l'ADN chez les eucaryotes ?",
+    ar: "7) أين يوجد الـADN في حقيقيات النوى؟",
+    rep_fr: "Principalement dans le noyau; aussi dans les mitochondries (et chloroplastes chez les plantes).",
+    rep_ar: "أساساً داخل النواة، وأيضاً في الميتوكوندريا (والكلوروبلاست لدى النباتات)."
+  },
+
+  // 8-14 : متوسط
+  {
+    fr: "8) Pourquoi l'ADN est-il décrit comme une 'double hélice' ?",
+    ar: "8) لماذا يوصف الـADN باللولب المزدوج؟",
+    rep_fr: "Parce qu'il est formé de deux brins antiparallèles enroulés l'un autour de l'autre.",
+    rep_ar: "لأنه يتكون من شريحتين متعاكستين ملتفتين حول بعض."
+  },
+  {
+    fr: "9) Qu'est-ce qu'un chromosome ?",
+    ar: "9) ما هو الكروموسوم؟",
+    rep_fr: "Une structure compacte contenant l'ADN associé à des protéines (histones) visible en métaphase.",
+    rep_ar: "بنية مكثفة تحتوي ADN مرتبطاً ببروتينات (الهيستونات) وتكون واضحة أثناء الطور الاستوائي."
+  },
+  {
+    fr: "10) Qu'est-ce qu'un gène ?",
+    ar: "10) ما هو الجين؟",
+    rep_fr: "Une séquence d'ADN qui code pour une molécule fonctionnelle (protéine ou ARN).",
+    rep_ar: "مقطع من الـADN يشفر بروتيناً أو نوعاً وظيفياً من الـARN."
+  },
+  {
+    fr: "11) Donnez un exemple de différence entre procaryotes et eucaryotes.",
+    ar: "11) أعط مثالاً للاختلاف بين بدائيات النوى وحقيقيات النوى.",
+    rep_fr: "Les procaryotes ont un chromosome circulaire et pas de noyau; les eucaryotes ont de l'ADN linéaire dans un noyau.",
+    rep_ar: "بدائيات النوى لها كروموسوم دائري ولا نواة؛ حقيقيات النوى لها ADN خطي داخل نواة."
+  },
+  {
+    fr: "12) Qu'est-ce que la réplication de l'ADN ?",
+    ar: "12) ما هي عملية تضاعف الـADN؟",
+    rep_fr: "Le processus par lequel l'ADN est copié avant la division cellulaire.",
+    rep_ar: "العملية التي يتم فيها نسخ الـADN قبل انقسام الخلية."
+  },
+  {
+    fr: "13) Quelle est la structure du nucléosome ?",
+    ar: "13) ما هي بنية النوكليوزوم؟",
+    rep_fr: "ADN enroulé autour d'un octamère d'histones (≈147 pb autour des histones).",
+    rep_ar: "ADN ملفوف حول وحدة من الهيستونات (نحو 147 زوج قواعد حول الهيستونات)."
+  },
+  {
+    fr: "14) Qu'est-ce que la chromatine hétérochromatique ?",
+    ar: "14) ما هي الكروماتين المتغاير (heterochromatin)؟",
+    rep_fr: "Des régions compactes de la chromatine, généralement transcriptionnellement inactives.",
+    rep_ar: "مناطق مكثفة من الكروماتين، عادة غير نشطة نسخيًا."
+  },
+
+  // 15-20 : صعب
+  {
+    fr: "15) Pourquoi la réplication est-elle dite 'semi-conservative' ?",
+    ar: "15) لماذا يقال إن التضاعف شبه محافظ؟",
+    rep_fr: "Parce que chaque molécule fille conserve un brin parental et synthétise un nouveau brin complémentaire.",
+    rep_ar: "لأن كل جزيء جديد يحتفظ بشريط قديم ويصنع شريطًا جديدًا مكملًا."
+  },
+  {
+    fr: "16) Quel est le rôle de l'ARNt ?",
+    ar: "16) ما وظيفة الـARNt؟",
+    rep_fr: "Transporter les acides aminés et les amener au ribosome selon le codon de l'ARNm.",
+    rep_ar: "يحمل الأحماض الأمينية ويجلبها إلى الرايبوسوم حسب الكودون في الـARNm."
+  },
+  {
+    fr: "17) Qu'est-ce qu'un génome ?",
+    ar: "17) ما هو الجينوم؟",
+    rep_fr: "L'ensemble du matériel génétique d'un organisme (ADN ou ARN selon certains virus).",
+    rep_ar: "مجمل المادة الوراثية لكائن حي (ADN أو ARN بالنسبة لبعض الفيروسات)."
+  },
+  {
+    fr: "18) Expliquez brièvement pourquoi G–C est plus stable que A–T.",
+    ar: "18) لماذا G–C أكثر استقرارًا من A–T؟",
+    rep_fr: "G–C forme trois liaisons hydrogène tandis que A–T en forme deux, renforçant la stabilité.",
+    rep_ar: "G–C تُكوّن ثلاث روابط هيدروجينية بينما A–T تُكوّن رابطتين، مما يزيد الاستقرار."
+  },
+  {
+    fr: "19) Où trouve-t-on de l'ADN mitochondrial ?",
+    ar: "19) أين يوجد الـ ADN الميتوكوندري؟",
+    rep_fr: "Dans la mitochondrie; il est souvent circulaire et hérité majoritairement de la mère.",
+    rep_ar: "في الميتوكوندريا؛ غالبًا دائري ويرث عادة من الأم."
+  },
+  {
+    fr: "20) Donnez une importance fonctionnelle de la compaction de l'ADN.",
+    ar: "20) اذكر أهمية وظيفية لتكثيف الـADN.",
+    rep_fr: "Permet l'organisation du noyau, la régulation de l'expression génique et le passage des chromosomes lors de la mitose.",
+    rep_ar: "يسمح بتنظيم النواة، تنظيم التعبير الجيني، وتمرير الكروموسومات أثناء الانقسام."
+  }
+];
+
+/* Render theory questions */
+const theoryList = document.getElementById("theoryList");
+theoryQuestions.forEach(item => {
+  const li = document.createElement("li");
+  li.className = "theory-item";
+  li.innerHTML = `
+    <div class="q-fr">${item.fr}</div>
+    <div class="q-ar">${item.ar}</div>
+    <div class="theory-answer">
+      <strong>Réponse (FR):</strong> ${item.rep_fr}<br>
+      <strong>الإجابة (AR):</strong> ${item.rep_ar}
+    </div>
+  `;
+  li.addEventListener("click", () => {
+    const ans = li.querySelector(".theory-answer");
+    ans.style.display = ans.style.display === "block" ? "none" : "block";
+  });
+  theoryList.appendChild(li);
+});
+
+
+/* ===================== 20 QCM (FR + AR) متدرجة الصعوبة ===================== */
+
+const qcmData = [
+  // 1-5 Easy
+  {
+    fr: "1) L’unité de base d’un acide nucléique est :",
+    ar: "1) الوحدة الأساسية في الحمض النووي هي:",
+    options: ["Acide aminé / حمض أميني", "Nucléotide / نيكليوتيد", "Polypeptide / بولي ببتيد"],
+    correct: 1
+  },
+  {
+    fr: "2) Quelle base se trouve dans l'ARN mais pas dans l'ADN ?",
+    ar: "2) أي قاعدة توجد في الـARN ولا توجد في الـADN؟",
+    options: ["Thymine (T)", "Uracile (U)", "Guanine (G)"],
+    correct: 1
+  },
+  {
+    fr: "3) L’ADN est :",
+    ar: "3) الـADN هو:",
+    options: ["Simple brin", "Double brin", "Pas un acide nucléique"],
+    correct: 1
+  },
+  {
+    fr: "4) Où se trouvent les gènes chez l’homme ?",
+    ar: "4) أين توجد الجينات عند الإنسان؟",
+    options: ["Dans le cytoplasme uniquement", "Dans les chromosomes du noyau", "Dans la paroi cellulaire"],
+    correct: 1
+  },
+  {
+    fr: "5) La liaison entre bases complémentaires est :",
+    ar: "5) الرابط بين القواعد المكملة هو:",
+    options: ["Covalente", "Hydrogène", "Glycosidique"],
+    correct: 1
+  },
+
+  // 6-12 Medium
+  {
+    fr: "6) Le sucre présent dans l'ADN est :",
+    ar: "6) السكر الموجود في الـADN هو:",
+    options: ["Ribose", "Désoxyribose", "Glucose"],
+    correct: 1
+  },
+  {
+    fr: "7) La réplication de l'ADN a lieu durant :",
+    ar: "7) تحدث تضاعفات الـADN خلال:",
+    options: ["Phase M", "Phase S du cycle cellulaire", "G0 (repos)"],
+    correct: 1
+  },
+  {
+    fr: "8) Quel type d’ARN porte le code pour la synthèse protéique ?",
+    ar: "8) أي نوع من الـARN يحمل الشيفرة لصنع البروتين؟",
+    options: ["ARNr", "ARNm", "ARNt"],
+    correct: 1
+  },
+  {
+    fr: "9) Chez les procaryotes l'ADN est souvent :",
+    ar: "9) عند بدائيات النوى يكون الـADN غالبًا:",
+    options: ["Linéraire", "Circulaire", "Terminé par télomères"],
+    correct: 1
+  },
+  {
+    fr: "10) Les nucléosomes contiennent :",
+    ar: "10) النوكليوزومات تحتوي على:",
+    options: ["Protéines histones", "ARN uniquement", "Lipides"],
+    correct: 0
+  },
+  {
+    fr: "11) Le génome mitochondrial est généralement :",
+    ar: "11) الجينوم الميتوكوندري عادة ما يكون:",
+    options: ["Circulaire", "Fragmenté", "Inexistant"],
+    correct: 0
+  },
+  {
+    fr: "12) La chromatine euchromatique est :",
+    ar: "12) الكروماتين الفعّال (euchromatin) هو:",
+    options: ["Très condensé et inactif", "Peu condensé et transcriptionnellement actif", "Toujours absent chez les eucaryotes"],
+    correct: 1
+  },
+
+  // 13-20 Hard
+  {
+    fr: "13) Lors de la réplication, l'enzyme principale qui synthétise l'ADN est :",
+    ar: "13) خلال التضاعف، الإنزيم الرئيسي الذي يصنع الـADN هو:",
+    options: ["ADN polymérase", "ARN polymérase", "Ligase uniquement"],
+    correct: 0
+  },
+  {
+    fr: "14) Les télomères se trouvent :",
+    ar: "14) أين توجد التيلوميرات؟",
+    options: ["Aux extrémités des chromosomes", "Dans le nucléole", "Dans la membrane plasmique"],
+    correct: 0
+  },
+  {
+    fr: "15) Quel est le nombre de paires de bases approximatif du génome humain ?",
+    ar: "15) ما تقريبا عدد أزواج القواعد في الجينوم البشري؟",
+    options: ["≈ 3 milliards", "≈ 3 millions", "≈ 300 milliards"],
+    correct: 0
+  },
+  {
+    fr: "16) Quel est le rôle de l'ADN ligase ?",
+    ar: "16) ما وظيفة إنزيم الـADN ليغاز؟",
+    options: ["Synthétiser l'ARN", "Lier les fragments d'Okazaki", "Dénaturer l'ADN"],
+    correct: 1
+  },
+  {
+    fr: "17) Une mutation silencieuse :",
+    ar: "17) ما هي الطفرة الصامتة؟",
+    options: ["Change l'acide aminé", "Ne change pas l'acide aminé", "Détruit le gène entier"],
+    correct: 1
+  },
+  {
+    fr: "18) Les histones sont :",
+    ar: "18) ما هي الهيستونات؟",
+    options: ["Des protéines basiques", "Des acides nucléiques", "Des lipides"],
+    correct: 0
+  },
+  {
+    fr: "19) Qu'est-ce qui caractérise l'ADN viral dans certains virus ?",
+    ar: "19) ما الذي يميّز الـADN الفيروسي في بعض الفيروسات؟",
+    options: ["Toujours linéaire", "Peut être ADN ou ARN, simple brin ou double brin", "Toujours circulaire"],
+    correct: 1
+  },
+  {
+    fr: "20)Quel mécanisme peut réparer une cassure simple brin ?",
+    ar: "20) أي آلية تصلح انقطاع شريط مفرد؟",
+    options: ["Réparation par excision", "Réparation par recombinaison non homologue", "Transcription"],
+    correct: 0
+  }
+];
+
+let score = 0;
+let answered = 0;
+
+const qcmContainer = document.getElementById("qcmContainer");
+
+qcmData.forEach((q, idx) => {
+  const card = document.createElement("div");
+  card.className = "qcm-card";
+
+  const title = document.createElement("div");
+  title.className = "qcm-title";
+  title.innerHTML = `<div style="font-weight:800">${q.fr}</div><div style="margin-top:6px;color:#444">${q.ar}</div>`;
+
+  const opts = document.createElement("div");
+  opts.className = "options";
+
+  q.options.forEach((opt, i) => {
+    const o = document.createElement("div");
+    o.className = "option";
+    o.textContent = opt;
+    o.tabIndex = 0;
+
+    o.addEventListener("click", () => {
+      if (card.dataset.answered === "true") return;
+      card.dataset.answered = "true";
+      answered++;
+
+      if (i === q.correct) {
+        o.classList.add("correct");
+        score++;
+      } else {
+        o.classList.add("wrong");
+        // show correct
+        const children = opts.querySelectorAll(".option");
+        if (children[q.correct]) children[q.correct].classList.add("correct");
+      }
+    });
+
+    // keyboard support
+    o.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") o.click();
+    });
+
+    opts.appendChild(o);
+  });
+
+  card.appendChild(title);
+  card.appendChild(opts);
+  qcmContainer.appendChild(card);
+});
+
+/* Buttons */
+document.getElementById("showScoreBtn").addEventListener("click", () => {
+  const box = document.getElementById("scoreBox");
+  const total = qcmData.length;
+  const un = total - answered;
+  box.textContent = `نتيجتك: ${score}/${total} — Votre score: ${score}/${total}` + (un > 0 ? ` — لم تُجب على ${un} سؤال` : "");
+  // Add simple feedback
+  if (score === total) box.textContent += " 🎉 ممتاز! / Excellent!";
+  else if (score >= Math.ceil(total * 0.75)) box.textContent += " ✅ جيد جدا / Très bien!";
+  else if (score >= Math.ceil(total * 0.5)) box.textContent += " 👍 متوسط / Moyenne";
+  else box.textContent += " 🔍 بحاجة لمراجعة / À revoir";
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  score = 0;
+  answered = 0;
+  document.getElementById("scoreBox").textContent = "";
+  document.querySelectorAll(".qcm-card").forEach(card => {
+    card.dataset.answered = "false";
+    card.querySelectorAll(".option").forEach(o => o.classList.remove("correct", "wrong"));
+  });
+  // hide all theory answers
+  document.querySelectorAll(".theory-answer").forEach(ans => ans.style.display = "none");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+/* Accessibility: open theory answer with Enter when focused.
+   Make each theory-item focusable */
+document.querySelectorAll('.theory-item').forEach((el) => {
+  el.tabIndex = 0;
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') el.click();
+  });
+});
+</script>
+
+</body>
+</html>
